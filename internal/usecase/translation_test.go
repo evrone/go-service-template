@@ -3,6 +3,7 @@ package usecase_test
 import (
 	"context"
 	"errors"
+	"sync"
 	"testing"
 
 	"github.com/golang/mock/gomock"
@@ -40,6 +41,8 @@ func TestHistory(t *testing.T) {
 
 	translation, repo, _ := translation(t)
 
+	var mu sync.Mutex
+
 	tests := []test{
 		{
 			name: "empty result",
@@ -64,6 +67,8 @@ func TestHistory(t *testing.T) {
 
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
+			mu.Lock()
+			defer mu.Unlock()
 
 			tc.mock()
 
@@ -79,6 +84,8 @@ func TestTranslate(t *testing.T) {
 	t.Parallel()
 
 	translation, repo, webAPI := translation(t)
+
+	var mu sync.Mutex
 
 	tests := []test{
 		{
@@ -114,6 +121,8 @@ func TestTranslate(t *testing.T) {
 
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
+			mu.Lock()
+			defer mu.Unlock()
 
 			tc.mock()
 
